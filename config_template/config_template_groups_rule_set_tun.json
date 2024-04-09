@@ -355,7 +355,7 @@
         "{all}"
       ],
       "filter":[
-        {"action":"include","keywords":["🇯🇵|JP|jp|日本|日|Japan"]}
+        {"action":"include","keywords":["🇯🇵|JP|jp|🇰🇷|韩国|日本|日|Japan"]}
       ]
     },
     {
