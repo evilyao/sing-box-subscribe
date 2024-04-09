@@ -108,6 +108,7 @@
         "Singapore",
         "Japan",
         "America",
+        "Proxy",
         "Others"
       ],
       "default": "America"
@@ -121,6 +122,7 @@
         "Singapore",
         "Japan",
         "America",
+        "Proxy",
         "Others"
       ]
     },
@@ -133,6 +135,7 @@
         "Singapore",
         "Japan",
         "America",
+        "Proxy",
         "Others"
       ]
     },
@@ -145,6 +148,7 @@
         "Singapore",
         "Japan",
         "America",
+        "Proxy",
         "Others"
       ]
     },
@@ -157,6 +161,7 @@
         "Singapore",
         "Japan",
         "America",
+        "Proxy",
         "Others"
       ]
     },
@@ -166,6 +171,7 @@
       "outbounds":[
         "direct",
         "HongKong",
+        "Proxy",
         "TaiWan"
       ]
     },
@@ -174,6 +180,7 @@
       "type":"selector",
       "outbounds":[
         "TaiWan",
+        "Proxy",
         "Proxy"
       ]
     },
@@ -186,6 +193,7 @@
         "Singapore",
         "Japan",
         "America",
+        "Proxy",
         "Others"
       ],
       "default": "America"
@@ -198,6 +206,7 @@
         "TaiWan",
         "Singapore",
         "Japan",
+        "Proxy",
         "America"
       ],
       "default": "Japan"
@@ -274,6 +283,7 @@
         "Singapore",
         "Japan",
         "America",
+        "Proxy",
         "Others"
       ]
     },
@@ -286,6 +296,8 @@
         "Singapore",
         "Japan",
         "America",
+        "Others",
+        "Proxy",
         "Others",
         "direct"
       ]
@@ -323,7 +335,7 @@
         "{all}"
       ],
       "filter":[
-        {"action":"include","keywords":["🇹🇼|TW|tw|台湾|臺灣|台|Taiwan"]}
+        {"action":"include","keywords":["🇹🇼|TW|tw|台湾|🇨🇳|臺灣|台|Taiwan"]}
       ]
     },
     {
