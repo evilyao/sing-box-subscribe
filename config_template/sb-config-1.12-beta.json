@@ -14,63 +14,93 @@
     },
   "cache_file": {
     "enabled": true,
-    "store_fakeip": false
+    "store_fakeip": true,
+    "store_rdrc": true
     }
   },
   "dns": {
     "servers": [
       {
-        "tag": "proxyDns",
-        "address": "tls://8.8.8.8",
-        "detour": "Proxy"
+        "tag": "google",
+        "type": "tls",
+        "server": "8.8.8.8"
       },
       {
-        "tag": "localDns",
-        "address": "https://223.5.5.5/dns-query",
+        "tag": "local",
+        "type": "https",
+        "server": "223.5.5.5",
         "detour": "direct"
+      },
+      {
+        "tag": "fakeip",
+        "type": "fakeip",
+        "inet4_range": "198.18.0.0/15",
+        "inet6_range": "fc00::/18"
       }
     ],
     "rules": [
       {
-        "outbound": "any",
-        "server": "localDns"
-      },
-      {
-        "rule_set": "geosite-cn",
-        "server": "localDns"
-      },   
-      {
         "clash_mode": "direct",
-        "server": "localDns"
+        "server": "local"
       },
       {
         "clash_mode": "global",
-        "server": "proxyDns"
+        "server": "google"
       },
       {
-        "rule_set": "geosite-geolocation-!cn",
-        "server": "proxyDns"
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "rule_set": "geosite-cn",
+        "server": "fakeip"
+      },
+      {
+        "rule_set": "geosite-cn",
+        "server": "local"
+      },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "rule_set": "geosite-geolocation-!cn",
+            "invert": true
+          },
+          {
+            "rule_set": "geoip-cn"
+          }
+        ],
+        "server": "google",
+        "client_subnet": "114.114.114.114/24"
+      },
+      {
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "fakeip"
       }
     ],
-    "final": "localDns",
-    "strategy": "ipv4_only"
+    "independent_cache": true,
+    "strategy": "prefer_ipv4"
   },
   "inbounds": [
     {
       "tag": "tun-in",
       "type": "tun",
       "address": [
-        "172.19.0.0/30"
+        "172.19.0.0/30",
+        "fdfe:dcba:9876::0/126"
       ],
-      "mtu": 9000,
+      "stack": "system",
       "auto_route": true,
       "strict_route": true,
-      "stack": "system",
       "platform": {
         "http_proxy": {
           "enabled": true,
           "server": "127.0.0.1",
-          "server_port": 2080
+          "server_port": 7890
         }
       }
     },
@@ -78,7 +108,7 @@
       "tag": "mixed-in",
       "type": "mixed",
       "listen": "127.0.0.1",
-      "listen_port": 2080
+      "listen_port": 7890
     }
   ],
   "outbounds": [
@@ -99,7 +129,6 @@
         "Singapore",
         "Japan",
         "America",
-        "Proxy",
         "Others"
       ],
       "default": "America"
@@ -113,7 +142,6 @@
         "Singapore",
         "Japan",
         "America",
-        "Proxy",
         "Others"
       ]
     },
@@ -126,7 +154,6 @@
         "Singapore",
         "Japan",
         "America",
-        "Proxy",
         "Others"
       ]
     },
@@ -139,7 +166,6 @@
         "Singapore",
         "Japan",
         "America",
-        "Proxy",
         "Others"
       ]
     },
@@ -152,7 +178,6 @@
         "Singapore",
         "Japan",
         "America",
-        "Proxy",
         "Others"
       ]
     },
@@ -162,7 +187,6 @@
       "outbounds":[
         "direct",
         "HongKong",
-        "Proxy",
         "TaiWan"
       ]
     },
@@ -171,7 +195,6 @@
       "type":"selector",
       "outbounds":[
         "TaiWan",
-        "Proxy",
         "Proxy"
       ]
     },
@@ -184,7 +207,6 @@
         "Singapore",
         "Japan",
         "America",
-        "Proxy",
         "Others"
       ],
       "default": "America"
@@ -197,7 +219,6 @@
         "TaiWan",
         "Singapore",
         "Japan",
-        "Proxy",
         "America"
       ],
       "default": "Japan"
@@ -211,7 +232,6 @@
         "Singapore",
         "Japan",
         "America",
-        "Proxy",
         "Others"
       ]
     },
@@ -224,7 +244,6 @@
         "Singapore",
         "Japan",
         "America",
-        "Proxy",
         "Others"
       ]
     },
@@ -251,7 +270,6 @@
         "Singapore",
         "Japan",
         "America",
-        "Proxy",
         "Others"
       ]
     },
@@ -277,7 +295,6 @@
         "Singapore",
         "Japan",
         "America",
-        "Proxy",
         "Others"
       ]
     },
@@ -290,8 +307,6 @@
         "Singapore",
         "Japan",
         "America",
-        "Others",
-        "Proxy",
         "Others",
         "direct"
       ]
@@ -306,7 +321,7 @@
     },
     {
       "tag":"HongKong",
-      "type":"urltest",
+      "type":"selector",
       "outbounds":[
         "{all}"
       ],
@@ -316,17 +331,17 @@
     },
     {
       "tag":"TaiWan",
-      "type":"urltest",
+      "type":"selector",
       "outbounds":[
         "{all}"
       ],
       "filter":[
-        {"action":"include","keywords":["🇹🇼|TW|tw|台湾|🇨🇳|臺灣|台|Taiwan"]}
+        {"action":"include","keywords":["🇹🇼|TW|tw|台湾|臺灣|台|Taiwan"]}
       ]
     },
     {
       "tag":"Singapore",
-      "type":"urltest",
+      "type":"selector",
       "outbounds":[
         "{all}"
       ],
@@ -336,17 +351,17 @@
     },
     {
       "tag":"Japan",
-      "type":"urltest",
+      "type":"selector",
       "outbounds":[
         "{all}"
       ],
       "filter":[
-        {"action":"include","keywords":["🇯🇵|JP|jp|🇰🇷|韩国|日本|日|Japan"]}
+        {"action":"include","keywords":["🇯🇵|JP|jp|日本|日|Japan"]}
       ]
     },
     {
       "tag":"America",
-      "type":"urltest",
+      "type":"selector",
       "outbounds":[
         "{all}"
       ],
@@ -356,12 +371,12 @@
     },
     {
       "tag":"Others",
-      "type":"urltest",
+      "type":"selector",
       "outbounds":[
         "{all}"
       ],
       "filter":[
-        {"action":"exclude","keywords":["🇭🇰|HK|hk|香港|香|🇹🇼|TW|tw|台湾|台|🇨🇳|🇰🇷|韩国|🇸🇬|SG|sg|新加坡|狮|🇯🇵|JP|jp|日本|日|🇺🇸|US|us|美国|美"]}
+        {"action":"exclude","keywords":["🇭🇰|HK|hk|香港|香|🇹🇼|TW|tw|台湾|台|🇸🇬|SG|sg|新加坡|狮|🇯🇵|JP|jp|日本|日|🇺🇸|US|us|美国|美"]}
       ]
     },
     {
@@ -383,6 +398,9 @@
     }
   ],
   "route": {
+    "default_domain_resolver": {
+      "server": "local"
+    },
     "auto_detect_interface": true,
     "final": "Proxy",
     "rules": [
